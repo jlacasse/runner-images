@@ -397,7 +397,7 @@ build {
       "${path.root}/../scripts/build/Configure-Diagnostics.ps1"
     ]
   }
-
+/*
   provisioner "powershell" {
     elevated_password = "${var.install_password}"
     elevated_user     = "${var.install_user}"
@@ -466,7 +466,7 @@ build {
   provisioner "windows-restart" {
     restart_timeout = "10m"
   }
-
+*/
   provisioner "powershell" {
     inline = [
       "if( Test-Path $env:SystemRoot\\System32\\Sysprep\\unattend.xml ){ rm $env:SystemRoot\\System32\\Sysprep\\unattend.xml -Force}",
