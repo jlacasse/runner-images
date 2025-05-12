@@ -346,27 +346,27 @@ build {
     inline = ["wmic product where \"name like '%%microsoft azure powershell%%'\" call uninstall /nointeractive"]
   }
 
-  provisioner "powershell" {
-    environment_vars = ["IMAGE_FOLDER=${var.image_folder}", "TEMP_DIR=${var.temp_dir}"]
-    scripts          = [
-      "${path.root}/../scripts/build/Install-ActionsCache.ps1",
-      "${path.root}/../scripts/build/Install-Ruby.ps1",
-      "${path.root}/../scripts/build/Install-PyPy.ps1",
-      "${path.root}/../scripts/build/Install-Toolset.ps1",
-      "${path.root}/../scripts/build/Configure-Toolset.ps1",
-      "${path.root}/../scripts/build/Install-NodeJS.ps1",
-      "${path.root}/../scripts/build/Install-AndroidSDK.ps1",
-      "${path.root}/../scripts/build/Install-PowershellAzModules.ps1",
-      "${path.root}/../scripts/build/Install-Pipx.ps1",
-      "${path.root}/../scripts/build/Install-Git.ps1",
-      "${path.root}/../scripts/build/Install-GitHub-CLI.ps1",
-      "${path.root}/../scripts/build/Install-PHP.ps1",
-      "${path.root}/../scripts/build/Install-Rust.ps1",
-      "${path.root}/../scripts/build/Install-Sbt.ps1",
-      "${path.root}/../scripts/build/Install-Chrome.ps1",
-      "${path.root}/../scripts/build/Install-EdgeDriver.ps1",
-      "${path.root}/../scripts/build/Install-Firefox.ps1",
-      "${path.root}/../scripts/build/Install-Selenium.ps1",
+  # provisioner "powershell" {
+  #   environment_vars = ["IMAGE_FOLDER=${var.image_folder}", "TEMP_DIR=${var.temp_dir}"]
+  #   scripts          = [
+  #     "${path.root}/../scripts/build/Install-ActionsCache.ps1",
+  #     "${path.root}/../scripts/build/Install-Ruby.ps1",
+  #     "${path.root}/../scripts/build/Install-PyPy.ps1",
+  #     "${path.root}/../scripts/build/Install-Toolset.ps1",
+  #     "${path.root}/../scripts/build/Configure-Toolset.ps1",
+  #     "${path.root}/../scripts/build/Install-NodeJS.ps1",
+  #     "${path.root}/../scripts/build/Install-AndroidSDK.ps1",
+  #     "${path.root}/../scripts/build/Install-PowershellAzModules.ps1",
+  #     "${path.root}/../scripts/build/Install-Pipx.ps1",
+  #     "${path.root}/../scripts/build/Install-Git.ps1",
+  #     "${path.root}/../scripts/build/Install-GitHub-CLI.ps1",
+  #     "${path.root}/../scripts/build/Install-PHP.ps1",
+  #     "${path.root}/../scripts/build/Install-Rust.ps1",
+  #     "${path.root}/../scripts/build/Install-Sbt.ps1",
+  #     "${path.root}/../scripts/build/Install-Chrome.ps1",
+  #     "${path.root}/../scripts/build/Install-EdgeDriver.ps1",
+  #     "${path.root}/../scripts/build/Install-Firefox.ps1",
+  #     "${path.root}/../scripts/build/Install-Selenium.ps1",
       # "${path.root}/../scripts/build/Install-IEWebDriver.ps1",
       # "${path.root}/../scripts/build/Install-Apache.ps1",
       # "${path.root}/../scripts/build/Install-Nginx.ps1",
@@ -395,8 +395,8 @@ build {
       # "${path.root}/../scripts/build/Install-MongoDB.ps1",
       # "${path.root}/../scripts/build/Install-CodeQLBundle.ps1",
       # "${path.root}/../scripts/build/Configure-Diagnostics.ps1"
-    ]
-  }
+  #   ]
+  # }
 /*
   provisioner "powershell" {
     elevated_password = "${var.install_password}"
