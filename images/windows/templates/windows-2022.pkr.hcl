@@ -468,17 +468,13 @@ build {
   }
 
   provisioner "powershell" {
-    inline = [
-      "$Path = 'HKLM:\\Software\\Microsoft\\Windows Advanced Threat Protection'",
-      "$Name = 'senseGuid'",
-      "try {",
-      "    Get-ItemProperty -Path $Path -Name $Name -ErrorAction Stop",
-      "    Remove-ItemProperty -Path $Path -Name $Name -Force -ErrorAction Stop",
-      "} catch {",
-      "    Write-Warning $_.Exception.Message -WarningAction SilentlyContinue",
-      "}"
+    elevated_password = "${var.install_password}"
+    elevated_user     = "${var.install_user}"
+    environment_vars  = ["IMAGE_FOLDER=${var.image_folder}", "TEMP_DIR=${var.temp_dir}"]
+    scripts           = [
+      "${path.root}/../scripts/build/pre-sysprep-task.ps1",
     ]
-}
+  }
 
   provisioner "powershell" {
     inline = [
