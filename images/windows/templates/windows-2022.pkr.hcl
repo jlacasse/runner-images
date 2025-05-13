@@ -469,6 +469,19 @@ build {
 
   provisioner "powershell" {
     inline = [
+      "$Path = 'HKLM:\\Software\\Microsoft\\Windows Advanced Threat Protection'",
+      "$Name = 'senseGuid'",
+      "try {",
+      "    Get-ItemProperty -Path $Path -Name $Name -ErrorAction Stop",
+      "    Remove-ItemProperty -Path $Path -Name $Name -Force -ErrorAction Stop",
+      "} catch {",
+      "    Write-Warning $_.Exception.Message -WarningAction SilentlyContinue",
+      "}"
+    ]
+}
+
+  provisioner "powershell" {
+    inline = [
       "if( Test-Path $env:SystemRoot\\System32\\Sysprep\\unattend.xml ){ rm $env:SystemRoot\\System32\\Sysprep\\unattend.xml -Force}",
       "& $env:SystemRoot\\System32\\Sysprep\\Sysprep.exe /oobe /generalize /shutdown /quiet"
     ]
