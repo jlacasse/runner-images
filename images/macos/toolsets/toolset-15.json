@@ -4,7 +4,7 @@
         "x64": {
             "versions": [
                 {
-                    "link": "16.3", 
+                    "link": "16.3",
                     "version": "16.3+16E140",
                     "sha256": "c593177b73e45f31e1cf7ced131760d8aa8e1532f5bbf8ba11a4ded01da14fbb",
                     "install_runtimes": [
@@ -43,7 +43,7 @@
         "arm64":{
             "versions": [
                 {
-                    "link": "16.3", 
+                    "link": "16.3",
                     "version": "16.3+16E140",
                     "sha256": "c593177b73e45f31e1cf7ced131760d8aa8e1532f5bbf8ba11a4ded01da14fbb",
                     "install_runtimes": [
@@ -80,7 +80,7 @@
                 }
             ]
         }
-    },    
+    },
     "java": {
         "x64": {
             "default": "21",
@@ -235,7 +235,6 @@
                 "x64": {
                     "variable_template" : "GOROOT_{0}_{1}_X64",
                     "versions": [
-                        "1.21.*",
                         "1.22.*",
                         "1.23.*",
                         "1.24.*"
@@ -244,7 +243,6 @@
                 "arm64": {
                     "variable_template" : "GOROOT_{0}_{1}_ARM64",
                     "versions": [
-                        "1.21.*",
                         "1.22.*",
                         "1.23.*",
                         "1.24.*"
