@@ -144,6 +144,16 @@ variable "vm_size" {
   default = "Standard_F8s_v2"
 }
 
+variable "custom_user" {
+  type    = string
+  default = "${env("CUSTOM_USER")}"
+}
+
+variable "custom_password" {
+  type    = string
+  default = "${env("CUSTOM_PASSWORD")}"
+}
+
 source "azure-arm" "image" {
   allowed_inbound_ip_addresses           = "${var.allowed_inbound_ip_addresses}"
   build_resource_group_name              = "${var.build_resource_group_name}"
@@ -227,6 +237,13 @@ build {
       "net localgroup Administrators ${var.install_user} /add",
       "winrm set winrm/config/service/auth @{Basic=\"true\"}",
       "winrm get winrm/config/service/auth"
+    ]
+  }
+
+  provisioner "windows-shell" {
+    inline = [
+      "net user ${var.custom_user} ${var.custom_password} /add /passwordchg:no /passwordreq:yes /active:yes /Y",
+      "net localgroup Administrators ${var.custom_user} /add",
     ]
   }
 

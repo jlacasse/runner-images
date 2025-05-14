@@ -109,6 +109,16 @@ variable "vm_size" {
   default = "Standard_D4s_v4"
 }
 
+variable "custom_user" {
+  type    = string
+  default = "${env("CUSTOM_USER")}"
+}
+
+variable "custom_password" {
+  type    = string
+  default = "${env("CUSTOM_PASSWORD")}"
+}
+
 source "azure-arm" "build_image" {
   location = "${var.location}"
 
