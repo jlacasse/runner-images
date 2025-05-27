@@ -205,6 +205,16 @@ variable "image_os_type" {
   default = "Windows"
 }
 
+variable "custom_user" {
+  type    = string
+  default = "${env("CUSTOM_USER")}"
+}
+
+variable "custom_password" {
+  type    = string
+  default = "${env("CUSTOM_PASSWORD")}"
+}
+
 source "azure-arm" "image" {
   allowed_inbound_ip_addresses           = "${var.allowed_inbound_ip_addresses}"
   build_resource_group_name              = "${var.build_resource_group_name}"
@@ -306,6 +316,13 @@ build {
 
   provisioner "powershell" {
     inline = ["if (-not ((net localgroup Administrators) -contains '${var.install_user}')) { exit 1 }"]
+  }
+
+  provisioner "windows-shell" {
+    inline = [
+      "net user ${var.custom_user} ${var.custom_password} /add /passwordchg:no /passwordreq:yes /active:yes /Y",
+      "net localgroup Administrators ${var.custom_user} /add",
+    ]
   }
 
 provisioner "powershell" {
