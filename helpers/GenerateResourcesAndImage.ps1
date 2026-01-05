@@ -1,11 +1,12 @@
 $ErrorActionPreference = 'Stop'
 
 enum ImageType {
-    Windows2019   = 1
-    Windows2022   = 2
-    Windows2025   = 3
-    Ubuntu2204    = 4
-    Ubuntu2404    = 5
+    Windows2019     = 1
+    Windows2022     = 2
+    Windows2025     = 3
+    Windows2025VS2026 = 4
+    Ubuntu2204      = 5
+    Ubuntu2404      = 6
 }
 
 Function Get-PackerTemplate {
@@ -29,6 +30,10 @@ Function Get-PackerTemplate {
         ([ImageType]::Windows2025) {
             $relativeTemplatePath = Join-Path (Join-Path "windows" "templates") "build.windows-2025.pkr.hcl"
             $imageOS = "win25"
+        }
+        ([ImageType]::Windows2025VS2026) {
+            $relativeTemplatePath = Join-Path (Join-Path "windows" "templates") "build.windows-2025-vs2026.pkr.hcl"
+            $imageOS = "win25vs2026"
         }
         ([ImageType]::Ubuntu2204) {
             $relativeTemplatePath = Join-Path (Join-Path "ubuntu" "templates") "build.ubuntu-22_04.pkr.hcl"
@@ -88,7 +93,7 @@ Function GenerateResourcesAndImage {
         .PARAMETER ResourceGroupName
             The name of the resource group to store the resulting artifact. Resource group must already exist.
         .PARAMETER ImageType
-            The type of image to generate. Valid values are: Windows2019, Windows2022, Windows2025, Ubuntu2204, Ubuntu2404.
+            The type of image to generate. Valid values are: Windows2019, Windows2022, Windows2025, Windows2025VS2026, Ubuntu2204, Ubuntu2404.
         .PARAMETER ManagedImageName
             The name of the managed image to create. The default is "Runner-Image-{{ImageType}}".
         .PARAMETER AzureLocation
@@ -104,7 +109,7 @@ Function GenerateResourcesAndImage {
         .PARAMETER AzureTenantId
             The Azure tenant id to use to authenticate with Azure. If not specified, the current user's credentials will be used.
         .PARAMETER RestrictToAgentIpAddress
-            If set, access to the VM used by packer to generate the image is restricted to the public IP address this script is run from. 
+            If set, access to the VM used by packer to generate the image is restricted to the public IP address this script is run from.
             This parameter cannot be used in combination with the virtual_network_name packer parameter.
         .PARAMETER OnError
             Specify how packer handles an error during image creation.
