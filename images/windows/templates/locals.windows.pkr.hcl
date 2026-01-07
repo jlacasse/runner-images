@@ -12,6 +12,10 @@ locals {
             source_image_marketplace_sku = "MicrosoftWindowsServer:WindowsServer:2025-Datacenter"
             os_disk_size_gb = 150
       }
+      "win25vs2026" = {
+            source_image_marketplace_sku = "MicrosoftWindowsServer:WindowsServer:2025-Datacenter"
+            os_disk_size_gb = 150
+      }
   }
 
   source_image_marketplace_sku = local.image_properties_map[var.image_os].source_image_marketplace_sku
