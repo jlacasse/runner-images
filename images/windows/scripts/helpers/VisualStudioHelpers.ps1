@@ -103,12 +103,20 @@ Function Install-VisualStudio {
                 exit $exitCode
             }
 
+            # vscollect.exe creates vslogs.zip in $env:TEMP, not $env:TEMP_DIR
+            $vsLogsZipPath = Join-Path $env:TEMP "vslogs.zip"
+            $vsLogsExtractPath = Join-Path $env:TEMP_DIR "vslogs"
+            
+            if (-not (Test-Path $vsLogsZipPath)) {
+                Write-Host "Warning: vslogs.zip not found at $vsLogsZipPath"
+                exit $exitCode
+            }
+
             # Expand the zip file
-            Expand-Archive -Path "$env:TEMP_DIR\vslogs.zip" -DestinationPath "$env:TEMP_DIR\vslogs"
+            Expand-Archive -Path $vsLogsZipPath -DestinationPath $vsLogsExtractPath -Force
 
             # Print logs
-            $vsLogsPath = "$env:TEMP_DIR\vslogs"
-            $vsLogs = Get-ChildItem -Path $vsLogsPath -Recurse | Where-Object { -not $_.PSIsContainer } | Select-Object -ExpandProperty FullName
+            $vsLogs = Get-ChildItem -Path $vsLogsExtractPath -Recurse | Where-Object { -not $_.PSIsContainer } | Select-Object -ExpandProperty FullName
             foreach ($log in $vsLogs) {
                 Write-Host "============================"
                 Write-Host "== Log file : $log "
