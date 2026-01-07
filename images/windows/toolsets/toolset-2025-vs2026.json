@@ -129,10 +129,10 @@
         { "name": "Wireless-Networking" }
     ],
     "visualStudio": {
-        "version" : "2026",
+        "version" : "18",
         "subversion" : "18",
         "edition" : "Enterprise",
-        "channel": "release",
+        "channel": "stable",
         "installChannel": "",
         "workloads": [
             "Component.Dotfuscator",

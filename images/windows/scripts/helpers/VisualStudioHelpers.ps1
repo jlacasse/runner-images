@@ -14,7 +14,7 @@ Function Install-VisualStudio {
 
     .PARAMETER Channel
         The channel of Visual Studio that will be installed. Required parameter.
-     
+
     .PARAMETER InstallChannel
         The InstallChannelUri of Visual Studio that will be installed. Required parameter.
 
@@ -34,17 +34,26 @@ Function Install-VisualStudio {
         [Parameter(Mandatory)] [String[]] $RequiredComponents,
         [String] $ExtraArgs = ""
     )
-    
-    
-    if (-not (Test-IsWin19)) {
-        $bootstrapperUrl = "https://aka.ms/vs/${Version}/postGRO-${Channel}/vs_${Edition}.exe"
+
+
+    # Special case for stable channel which uses a different URL pattern
+    if ($Channel -eq "stable") {
+        $bootstrapperUrl = "https://aka.ms/vs/stable/vs_${Edition}.exe"
+        $channelUri = "https://aka.ms/vs/${Version}/release/channel"
+        $channelId = "VisualStudio.${Version}.Release"
+        $productId = "Microsoft.VisualStudio.Product.${Edition}"
+        $installChannelUri = "https://aka.ms/vs/${Version}/release/channel"
     } else {
-        $bootstrapperUrl = "https://aka.ms/vs/${Version}/${Channel}/vs_${Edition}.exe"
+        if (-not (Test-IsWin19)) {
+            $bootstrapperUrl = "https://aka.ms/vs/${Version}/postGRO-${Channel}/vs_${Edition}.exe"
+        } else {
+            $bootstrapperUrl = "https://aka.ms/vs/${Version}/${Channel}/vs_${Edition}.exe"
+        }
+        $channelUri = "https://aka.ms/vs/${Version}/${Channel}/channel"
+        $channelId = "VisualStudio.${Version}.Release"
+        $productId = "Microsoft.VisualStudio.Product.${Edition}"
+        $installChannelUri = "https://aka.ms/vs/${Version}/${Channel}/${installchannel}/channel"
     }
-    $channelUri = "https://aka.ms/vs/${Version}/${Channel}/channel"
-    $channelId = "VisualStudio.${Version}.Release"
-    $productId = "Microsoft.VisualStudio.Product.${Edition}"
-    $installChannelUri = "https://aka.ms/vs/${Version}/${Channel}/${installchannel}/channel"
 
     Write-Host "Downloading Bootstrapper ..."
     $bootstrapperFilePath = Invoke-DownloadWithRetry $BootstrapperUrl
