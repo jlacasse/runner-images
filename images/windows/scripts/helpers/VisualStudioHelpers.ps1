@@ -106,7 +106,7 @@ Function Install-VisualStudio {
             # vscollect.exe creates vslogs.zip in $env:TEMP, not $env:TEMP_DIR
             $vsLogsZipPath = Join-Path $env:TEMP "vslogs.zip"
             $vsLogsExtractPath = Join-Path $env:TEMP_DIR "vslogs"
-            
+
             if (-not (Test-Path $vsLogsZipPath)) {
                 Write-Host "Warning: vslogs.zip not found at $vsLogsZipPath"
                 exit $exitCode
