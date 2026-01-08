@@ -27,28 +27,28 @@ Describe "Visual Studio" {
             $installedComponents | Should -Contain $ComponentName
         }
     }
-    
+
     # Log installed components for VS 2026 without failing
     Context "Visual Studio 2026 components (info only)" -Skip:(-not $isVS2026) {
         It "Lists installed components for analysis" {
             $installedComponents = Get-VisualStudioComponents | Select-Object -ExpandProperty Package
             $expectedComponents = Get-ToolsetContent | Select-Object -ExpandProperty visualStudio | Select-Object -ExpandProperty workloads
-            
+
             Write-Host "=== VS 2026 Components Analysis ===" -ForegroundColor Cyan
             Write-Host "Expected components: $($expectedComponents.Count)" -ForegroundColor Yellow
             Write-Host "Installed components: $($installedComponents.Count)" -ForegroundColor Yellow
-            
+
             $missingComponents = $expectedComponents | Where-Object { $installedComponents -notcontains $_ }
             if ($missingComponents) {
                 Write-Host "`nMissing components ($($missingComponents.Count)):" -ForegroundColor Yellow
                 $missingComponents | ForEach-Object { Write-Host "  - $_" -ForegroundColor Gray }
             }
-            
+
             $extraComponents = $installedComponents | Where-Object { $expectedComponents -notcontains $_ }
             if ($extraComponents.Count -gt 0) {
                 Write-Host "`nExtra components installed: $($extraComponents.Count)" -ForegroundColor Green
             }
-            
+
             # Always pass - this is just for logging
             $true | Should -Be $true
         }
