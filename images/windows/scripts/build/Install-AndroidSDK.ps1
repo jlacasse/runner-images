@@ -37,7 +37,7 @@ function Install-AndroidSDKPackages {
         [AllowNull()]
         [string[]] $Packages
     )
-    
+
     # The sdkmanager.bat script is used to install Android SDK packages.
     $SDKManager = "$SDKRootPath\cmdline-tools\latest\bin\sdkmanager.bat"
 
@@ -65,9 +65,16 @@ $cmdlineToolsArchPath = Invoke-DownloadWithRetry $cmdlineToolsUrl
 
 Test-FileChecksum $cmdlineToolsArchPath -ExpectedSHA256Sum $androidToolset.hash
 
+# Clean up cmdline-tools directory if it already exists to avoid extraction conflicts
+$cmdlineToolsPath = "${SDKInstallRoot}\cmdline-tools"
+if (Test-Path $cmdlineToolsPath) {
+    Write-Host "Cleaning existing cmdline-tools directory..."
+    Remove-Item -Path $cmdlineToolsPath -Recurse -Force -ErrorAction SilentlyContinue
+}
+
 Expand-7ZipArchive -Path $cmdlineToolsArchPath -DestinationPath "${SDKInstallRoot}\cmdline-tools"
 
-# cmdline tools should be installed in ${SDKInstallRoot}\cmdline-tools\latest\bin, but archive contains ${SDKInstallRoot}\cmdline-tools\bin 
+# cmdline tools should be installed in ${SDKInstallRoot}\cmdline-tools\latest\bin, but archive contains ${SDKInstallRoot}\cmdline-tools\bin
 # we need to create the proper folder structure
 Invoke-ScriptBlockWithRetry -Command {
     Rename-Item "${SDKInstallRoot}\cmdline-tools\cmdline-tools" "latest" -ErrorAction Stop
