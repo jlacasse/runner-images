@@ -39,10 +39,12 @@ Function Install-VisualStudio {
     # Special case for stable channel which uses a different URL pattern
     if ($Channel -eq "stable") {
         $bootstrapperUrl = "https://aka.ms/vs/stable/vs_${Edition}.exe"
-        $channelUri = "https://aka.ms/vs/${Version}/release/channel"
-        $channelId = "VisualStudio.${Version}.Release"
+        # For stable channel, don't specify channelUri/installChannelUri as they may not exist yet
+        # The bootstrapper will use the built-in channel information from the exe
+        $channelUri = ""
+        $channelId = ""
         $productId = "Microsoft.VisualStudio.Product.${Edition}"
-        $installChannelUri = "https://aka.ms/vs/${Version}/release/channel"
+        $installChannelUri = ""
     } else {
         if (-not (Test-IsWin19)) {
             $bootstrapperUrl = "https://aka.ms/vs/${Version}/postGRO-${Channel}/vs_${Edition}.exe"
@@ -63,12 +65,20 @@ Function Install-VisualStudio {
 
     try {
         $responseData = @{
-            "installChannelUri" = $installChannelUri
-            "channelUri" = $channelUri
-            "channelId"  = $channelId
             "productId"  = $productId
             "arch"       = "x64"
             "add"        = $RequiredComponents | ForEach-Object { "$_;includeRecommended" }
+        }
+
+        # Only add channel URIs if they are not empty (stable channel may not have them)
+        if ($channelUri) {
+            $responseData["channelUri"] = $channelUri
+        }
+        if ($installChannelUri) {
+            $responseData["installChannelUri"] = $installChannelUri
+        }
+        if ($channelId) {
+            $responseData["channelId"] = $channelId
         }
 
         # Create json file with response data
