@@ -64,30 +64,33 @@ Function Install-VisualStudio {
     Test-FileSignature -Path $bootstrapperFilePath -ExpectedSubject $(Get-MicrosoftPublisher)
 
     try {
-        $responseData = @{
-            "productId"  = $productId
-            "arch"       = "x64"
-            "add"        = $RequiredComponents | ForEach-Object { "$_;includeRecommended" }
-        }
-
-        # Only add channel URIs if they are not empty (stable channel may not have them)
-        if ($channelUri) {
-            $responseData["channelUri"] = $channelUri
-        }
-        if ($installChannelUri) {
-            $responseData["installChannelUri"] = $installChannelUri
-        }
-        if ($channelId) {
-            $responseData["channelId"] = $channelId
-        }
-
-        # Create json file with response data
-        $responseDataPath = "$env:TEMP\vs_install_response.json"
-        $responseData | ConvertTo-Json | Out-File -FilePath $responseDataPath
-
         $installStartTime = Get-Date
         Write-Host "Starting Install ..."
-        $bootstrapperArgumentList = ('/c', $bootstrapperFilePath, '--in', $responseDataPath, $ExtraArgs, '--quiet', '--norestart', '--wait', '--nocache' )
+
+        # For stable channel (VS 2026), use command-line parameters instead of JSON file
+        # because the channel URLs may not exist yet
+        if ($Channel -eq "stable") {
+            # Build component list as command-line arguments
+            $componentArgs = $RequiredComponents | ForEach-Object { "--add"; "$_;includeRecommended" }
+            $bootstrapperArgumentList = @('/c', $bootstrapperFilePath) + $componentArgs + @($ExtraArgs, '--quiet', '--norestart', '--wait', '--nocache')
+        } else {
+            # For other channels, use the JSON response file method
+            $responseData = @{
+                "installChannelUri" = $installChannelUri
+                "channelUri" = $channelUri
+                "channelId"  = $channelId
+                "productId"  = $productId
+                "arch"       = "x64"
+                "add"        = $RequiredComponents | ForEach-Object { "$_;includeRecommended" }
+            }
+
+            # Create json file with response data
+            $responseDataPath = "$env:TEMP\vs_install_response.json"
+            $responseData | ConvertTo-Json | Out-File -FilePath $responseDataPath
+
+            $bootstrapperArgumentList = ('/c', $bootstrapperFilePath, '--in', $responseDataPath, $ExtraArgs, '--quiet', '--norestart', '--wait', '--nocache' )
+        }
+
         Write-Host "Bootstrapper arguments: $bootstrapperArgumentList"
         $process = Start-Process -FilePath cmd.exe -ArgumentList $bootstrapperArgumentList -Wait -PassThru
 
