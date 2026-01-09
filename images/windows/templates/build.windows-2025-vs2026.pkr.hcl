@@ -159,7 +159,7 @@ provisioner "powershell" {
       "${path.root}/../scripts/build/Install-Sbt.ps1",
       "${path.root}/../scripts/build/Install-Chrome.ps1",
       "${path.root}/../scripts/build/Install-EdgeDriver.ps1",
-      "${path.root}/../scripts/build/Install-Firefox.ps1",
+      # "${path.root}/../scripts/build/Install-Firefox.ps1",  # Disabled - blocked by firewall
       "${path.root}/../scripts/build/Install-Selenium.ps1",
       "${path.root}/../scripts/build/Install-IEWebDriver.ps1",
       "${path.root}/../scripts/build/Install-Apache.ps1",

@@ -88,7 +88,8 @@ Describe "Edge" {
     }
 }
 
-Describe "Firefox" {
+# Firefox disabled - blocked by firewall
+Describe "Firefox" -Skip {
     Context "WebDriver" {
         It "GeckoWebDriver environment variable and path exists" {
             $env:GeckoWebDriver | Should -Not -BeNullOrEmpty
