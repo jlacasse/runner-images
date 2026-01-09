@@ -33,7 +33,7 @@ $webDrivers = @{
 }
 
 function Build-BrowserSection {
-    return @(
+    $nodes = @(
         $(Get-BrowserVersion -Browser "chrome"),
         $(Get-SeleniumWebDriverVersion -Driver "chrome"),
         $(Get-BrowserVersion -Browser "edge"),
@@ -43,6 +43,8 @@ function Build-BrowserSection {
         $(Get-SeleniumWebDriverVersion -Driver "iexplorer"),
         $(Get-SeleniumVersion)
     )
+    # Filter out null values for disabled/missing browsers and drivers
+    return $nodes | Where-Object { $null -ne $_ }
 }
 
 function Get-BrowserVersion {
@@ -52,6 +54,13 @@ function Get-BrowserVersion {
     $browserName = $browsers.$Browser.Name
     $browserFile = $browsers.$Browser.File
     $registryKey = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\$browserFile"
+
+    # Skip if browser is not installed (e.g., Firefox may be disabled)
+    if (-not (Test-Path $registryKey)) {
+        Write-Host "Browser $browserName not found in registry, skipping..."
+        return $null
+    }
+
     $browserVersion = (Get-Item (Get-ItemProperty $registryKey)."(Default)").VersionInfo.FileVersion
     return [ToolVersionNode]::new($browserName, $browserVersion)
 }
@@ -63,7 +72,20 @@ function Get-SeleniumWebDriverVersion {
     $driverName = $webDrivers.$Driver.Name
     $driverPath = $webDrivers.$Driver.Path
     $versionFileName = "versioninfo.txt";
-    $webDriverVersion = Get-Content -Path "$driverPath\$versionFileName"
+
+    # Skip if WebDriver is not installed (e.g., GeckoDriver for Firefox)
+    if (-not (Test-Path $driverPath)) {
+        Write-Host "WebDriver $driverName not found at $driverPath, skipping..."
+        return $null
+    }
+
+    $versionFilePath = "$driverPath\$versionFileName"
+    if (-not (Test-Path $versionFilePath)) {
+        Write-Host "Version file for $driverName not found, skipping..."
+        return $null
+    }
+
+    $webDriverVersion = Get-Content -Path $versionFilePath
     return [ToolVersionNode]::new($driverName, $webDriverVersion)
 }
 
